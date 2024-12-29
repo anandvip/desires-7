@@ -5,371 +5,319 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Desire Tracker</title>
     <style>
-        /* Core styles and reset */
-        * {
+       * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
-        }
-
-        :root {
-            --primary: #4f46e5;
-            --primary-light: #818cf8;
-            --primary-dark: #3730a3;
-            --gray-50: #f9fafb;
-            --gray-100: #f3f4f6;
-            --gray-200: #e5e7eb;
-            --gray-300: #d1d5db;
-            --gray-400: #9ca3af;
-            --gray-500: #6b7280;
-            --gray-600: #4b5563;
-            --gray-700: #374151;
-            --gray-800: #1f2937;
-            --gray-900: #111827;
-            --red-500: #ef4444;
-            --red-600: #dc2626;
-            --green-500: #22c55e;
-            --green-600: #16a34a;
-            --yellow-500: #eab308;
-            --yellow-600: #ca8a04;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
 
         body {
             min-height: 100vh;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
-            padding: 1rem;
-            color: var(--gray-800);
-            line-height: 1.6;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
         }
 
-        /* Layout */
         .container {
-            max-width: 1000px;
-            margin: 2rem auto;
-            background: rgb(255 255 255 / 98%);
-            border-radius: 1rem;
-            padding: 2rem;
-            box-shadow: 0 8px 32px rgb(0 0 0 / 10%);
+            max-width: 900px;
+            margin: 20px auto;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
         }
 
-        /* Header */
-        .header {
+        h1 {
+            color: #2d3748;
             text-align: center;
-            margin-bottom: 2rem;
+            margin-bottom: 30px;
+            font-size: 2.5em;
+            font-weight: 700;
         }
 
-        .header h1 {
-            font-size: 2.5rem;
-            font-weight: 800;
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .header p {
-            color: var(--gray-600);
-            font-size: 1.125rem;
-        }
-
-        /* Authentication */
-        .auth-section {
-            margin-bottom: 2rem;
-            background: var(--gray-50);
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            box-shadow: 0 2px 4px rgb(0 0 0 / 5%);
-        }
-
-        .user-profile {
-            display: none;
-            align-items: center;
-            justify-content: space-between;
-            gap: 1rem;
-            padding: 1rem;
-            background: white;
-            border-radius: 0.75rem;
-            margin-bottom: 1rem;
-        }
-
-        .user-profile.active {
+        .input-methods {
             display: flex;
+            gap: 15px;
+            margin-bottom: 20px;
+            justify-content: center;
         }
 
-        .user-info {
+        .mic-btn {
+            background: #48bb78;
             display: flex;
             align-items: center;
-            gap: 1rem;
+            gap: 8px;
         }
 
-        .user-avatar {
-            width: 48px;
-            height: 48px;
-            border-radius: 9999px;
-            border: 2px solid var(--primary);
+        .mic-btn.recording {
+            background: #f56565;
+            animation: pulse 1.5s infinite;
         }
 
-        .user-details {
-            display: flex;
-            flex-direction: column;
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
 
-        .user-name {
-            font-weight: 600;
-            color: var(--gray-900);
-        }
-
-        .user-email {
-            color: var(--gray-500);
-            font-size: 0.875rem;
-        }
-
-        /* Forms */
-        .form-container {
-            background: white;
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 2px 4px rgb(0 0 0 / 5%);
+        .desire-form {
+            display: grid;
+            gap: 20px;
+            margin-bottom: 30px;
         }
 
         .form-group {
-            margin-bottom: 1.5rem;
-        }
-
-        .form-group label {
-            display: block;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
-            color: var(--gray-700);
-        }
-
-        .form-control {
-            width: 100%;
-            padding: 0.75rem 1rem;
-            border: 2px solid var(--gray-200);
-            border-radius: 0.5rem;
-            font-size: 1rem;
-            transition: all 0.2s ease;
-        }
-
-        .form-control:focus {
-            outline: none;
-            border-color: var(--primary);
-            box-shadow: 0 0 0 3px rgb(79 70 229 / 10%);
-        }
-
-        textarea.form-control {
-            min-height: 100px;
-            resize: vertical;
-        }
-
-        /* Buttons */
-        .btn {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            gap: 0.5rem;
-            padding: 0.75rem 1.5rem;
-            font-weight: 500;
-            border-radius: 0.5rem;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: none;
-            font-size: 1rem;
-        }
-
-        .btn-primary {
-            background: var(--primary);
-            color: white;
-        }
-
-        .btn-primary:hover {
-            background: var(--primary-dark);
-            transform: translateY(-1px);
-        }
-
-         .btn-google {
-            background: white;
-            color: var(--gray-700);
-            border: 1px solid var(--gray-200);
-            margin: 0 auto;
-            display: flex;
-        }
-
-        .btn-google:hover {
-            background: var(--gray-50);
-            transform: translateY(-1px);
-            box-shadow: 0 4px 6px rgb(0 0 0 / 5%);
-        }
-
-        .btn-danger {
-            background: var(--red-500);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            background: var(--red-600);
-        }
-
-        /* Desire Cards */
-        .desires-grid {
             display: grid;
-            gap: 1.5rem;
+            gap: 8px;
+        }
+
+        label {
+            font-weight: 600;
+            color: #4a5568;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+
+        button {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        button:hover {
+            background: #5a67d8;
+            transform: translateY(-1px);
+        }
+
+        .desires-list {
+            display: grid;
+            gap: 20px;
         }
 
         .desire-card {
             background: white;
-            border-radius: 0.75rem;
-            padding: 1.5rem;
-            box-shadow: 0 2px 4px rgb(0 0 0 / 5%);
-            transition: all 0.2s ease;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+            border: 1px solid #e2e8f0;
+            transition: all 0.3s ease;
+            cursor: move;
+            position: relative;
         }
 
-        .desire-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 4px 6px rgb(0 0 0 / 10%);
+        .desire-card.dragging {
+            opacity: 0.5;
+            transform: scale(0.95);
+        }
+
+        .desire-card::before {
+            content: '⋮⋮';
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #a0aec0;
+            font-size: 20px;
+            cursor: move;
         }
 
         .desire-header {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 1rem;
+            margin-bottom: 10px;
+            padding-left: 30px;
         }
 
         .desire-title {
-            font-size: 1.25rem;
+            font-size: 1.25em;
             font-weight: 600;
-            color: var(--gray-900);
+            color: #2d3748;
         }
 
-        .priority-badge {
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.875rem;
+        .desire-priority {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 14px;
             font-weight: 500;
         }
 
-        .priority-high {
-            background: rgb(254 226 226);
-            color: rgb(153 27 27);
-        }
-
-        .priority-medium {
-            background: rgb(254 243 199);
-            color: rgb(146 64 14);
-        }
-
-        .priority-low {
-            background: rgb(209 250 229);
-            color: rgb(6 95 70);
-        }
+        .priority-high { background: #fed7d7; color: #c53030; }
+        .priority-medium { background: #feebc8; color: #c05621; }
+        .priority-low { background: #c6f6d5; color: #2f855a; }
 
         .desire-description {
-            color: var(--gray-600);
-            margin-bottom: 1.5rem;
-            line-height: 1.6;
+            color: #4a5568;
+            margin-bottom: 15px;
+            line-height: 1.5;
+            padding-left: 30px;
         }
 
-         .desire-footer {
+        .state-notes {
+            margin: 15px 0;
+            padding: 15px 30px;
+            background: #f7fafc;
+            border-radius: 8px;
+        }
+
+        .state-note {
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding-top: 1rem;
-            border-top: 1px solid var(--gray-200);
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .state-note:last-child {
+            border-bottom: none;
+        }
+
+        .state-note-date {
+            font-size: 0.85em;
+            color: #718096;
+            margin-right: 10px;
+        }
+
+        .state-note-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .state-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .state-btn {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            padding: 8px 12px;
+            font-size: 14px;
+            background: #4a5568;
+            color: white;
+            border-radius: 6px;
+        }
+
+        .state-btn:hover {
+            background: #2d3748;
+        }
+
+        .state-input-group {
+            display: none;
+            margin-top: 10px;
+        }
+
+        .state-input-group.active {
+            display: block;
+        }
+
+        .state-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+            margin-bottom: 8px;
+        }
+
+        .desire-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #e2e8f0;
+            padding-left: 30px;
         }
 
         .desire-date {
-            color: var(--gray-500);
-            font-size: 0.875rem;
+            color: #718096;
+            font-size: 14px;
         }
 
-        /* Toast Notifications */
-        .toast-container {
-            position: fixed;
-            top: 1rem;
-            right: 1rem;
-            z-index: 50;
+        .delete-btn {
+            background: #fc8181;
+            padding: 8px 16px;
+            font-size: 14px;
         }
 
-        .toast {
-            background: white;
-            border-radius: 0.5rem;
-            padding: 1rem 1.5rem;
-            margin-bottom: 0.5rem;
-            box-shadow: 0 4px 6px rgb(0 0 0 / 10%);
-            display: flex;
-            align-items: center;
-            gap: 0.75rem;
-            min-width: 300px;
-            animation: slideIn 0.3s ease-out;
-            transition: opacity 0.3s ease-out, transform 0.3s ease-out;
+        .delete-btn:hover {
+            background: #f56565;
         }
 
-
-         @keyframes slideIn {
-            from {
-                transform: translateX(100%);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-
-        /* Loading Spinner */
-        .loading-overlay {
-            display: none;
-            position: fixed;
-            inset: 0;
-            background: rgb(0 0 0 / 50%);
-            justify-content: center;
-            align-items: center;
-            z-index: 100;
-        }
-
-        .loading-overlay.active {
-            display: flex;
-        }
-
-        .spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid white;
-            border-top: 3px solid var(--primary);
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-        }
-
-        @keyframes spin {
-            to {
-                transform: rotate(360deg);
-            }
-        }
-
-        /* Empty State */
         .empty-state {
             text-align: center;
-            padding: 3rem 1.5rem;
-            color: var(--gray-500);
+            padding: 40px;
+            color: #718096;
         }
 
-        .empty-state h3 {
-            color: var(--gray-700);
-            margin-bottom: 0.5rem;
-            font-size: 1.25rem;
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+
+        .recognition-status {
+            text-align: center;
+            margin: 10px 0;
+            font-style: italic;
+            color: #718096;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <header class="header">
+          <header class="header">
             <h1>✨ Desire Tracker</h1>
             <p>Transform your dreams into reality</p>
         </header>
-
-        <section class="auth-section">
+         <section class="auth-section">
             <div id="userProfile" class="user-profile">
                 <div class="user-info">
                     <img id="userAvatar" class="user-avatar" src="" alt="Profile">
@@ -389,65 +337,66 @@
             </button>
         </section>
 
-        <main id="mainContent" style="display: none;">
-            <form id="desireForm" class="form-container">
-                <div class="form-group">
-                    <label for="desireTitle">What's your desire?</label>
-                    <input 
-                        type="text" 
-                        id="desireTitle" 
-                        class="form-control"
-                        required 
-                        placeholder="Enter your desire..."
-                        maxlength="100"
-                    >
-                </div>
+        <div class="input-methods">
+            <button id="micBtn" class="mic-btn">
+                🎤 Start Dictation
+            </button>
+            <button id="showFormBtn">
+                ✏️ Manual Entry
+            </button>
+        </div>
+          <main id="mainContent" style="display: none;">
+        <form class="desire-form" id="desireForm">
+            <div class="form-group">
+                <label for="desireTitle">What's your desire?</label>
+                <input type="text" id="desireTitle" required placeholder="Enter your desire...">
+            </div>
 
-                <div class="form-group">
-                    <label for="desireDescription">Description</label>
-                    <textarea 
-                        id="desireDescription" 
-                        class="form-control"
-                        placeholder="Describe your desire in detail..."
-                        maxlength="500"
-                    ></textarea>
-                </div>
+            <div class="form-group">
+                <label for="desireDescription">Description</label>
+                <textarea id="desireDescription" placeholder="Describe your desire in detail..."></textarea>
+            </div>
 
-                <div class="form-group">
-                    <label for="desirePriority">Priority Level</label>
-                    <select id="desirePriority" class="form-control">
-                        <option value="low">Low Priority</option>
-                        <option value="medium">Medium Priority</option>
-                        <option value="high">High Priority</option>
-                    </select>
-                </div>
+            <div class="form-group">
+                <label for="desirePriority">Priority Level</label>
+                <select id="desirePriority">
+                    <option value="low">Low Priority</option>
+                    <option value="medium">Medium Priority</option>
+                    <option value="high">High Priority</option>
+                </select>
+            </div>
 
-                <button type="submit" class="btn btn-primary">
-                    ➕ Add Desire
-                </button>
-            </form>
-
-            <div id="desiresList" class="desires-grid"></div>
-        </main>
+            <button type="submit">Add Desire</button>
+        </form>
+         <div id="desiresList" class="desires-list"></div>
+          </main>
     </div>
 
-    <div id="toastContainer" class="toast-container"></div>
-    
+    <div id="speechModal" class="modal">
+        <div class="modal-content">
+            <h2>Speech Recognition</h2>
+            <p id="recognitionStatus" class="recognition-status">Listening...</p>
+            <div id="recognizedText"></div>
+            <button id="confirmSpeech">Confirm</button>
+            <button id="cancelSpeech">Cancel</button>
+        </div>
+    </div>
+      <div id="toastContainer" class="toast-container"></div>
+        
     <div id="loadingOverlay" class="loading-overlay">
         <div class="spinner"></div>
     </div>
-
     <script type="module">
         // Import Firebase modules
         import { initializeApp } from 'https://www.gstatic.com/firebasejs/11.1.0/firebase-app.js';
-        import { 
-            getAuth, 
-            signInWithPopup, 
+        import {
+            getAuth,
+            signInWithPopup,
             GoogleAuthProvider,
             signOut,
-            onAuthStateChanged 
+            onAuthStateChanged
         } from 'https://www.gstatic.com/firebasejs/11.1.0/firebase-auth.js';
-        import { 
+        import {
             getFirestore,
             collection,
             addDoc,
@@ -476,11 +425,8 @@
         const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
 
-        // Utility functions
-        const utils = {
-            showLoading: () => document.getElementById('loadingOverlay').classList.add('active'),
-            hideLoading: () => document.getElementById('loadingOverlay').classList.remove('active'),
-
+       // Utility functions
+         const utils = {
             formatDate: (dateString) => {
                 return new Date(dateString).toLocaleDateString('en-US', {
                     year: 'numeric',
@@ -490,23 +436,24 @@
                     minute: '2-digit'
                 });
             },
-
+             showLoading: () => document.getElementById('loadingOverlay').classList.add('active'),
+            hideLoading: () => document.getElementById('loadingOverlay').classList.remove('active'),
             showToast: (message, type = 'success') => {
                 const toastContainer = document.getElementById('toastContainer');
                 const toast = document.createElement('div');
                 toast.className = 'toast';
-                
-                const icon = type === 'success' ? '✅' : 
-                            type === 'error' ? '❌' : 
-                            '🔔';
-                
+
+                const icon = type === 'success' ? '✅' :
+                    type === 'error' ? '❌' :
+                        '🔔';
+
                 toast.innerHTML = `
                     <span>${icon}</span>
                     <span>${message}</span>
                 `;
-                
+
                 toastContainer.appendChild(toast);
-                
+
                 setTimeout(() => {
                     toast.style.opacity = '0';
                     toast.style.transform = 'translateX(100%)';
@@ -517,76 +464,78 @@
 
         // DesireManager class to handle data operations
         class DesireManager {
-           constructor() {
+            constructor() {
                 this.desires = [];
                 this.currentUser = null;
                 this.db = getFirestore();
-                this.localStorageKey = 'desires'; // Local storage key
-           }
+                this.localStorageKey = 'desires';
+            }
 
-           // Local Storage Functions
-           loadDesiresFromLocalStorage() {
+             // Local Storage Functions
+            loadDesiresFromLocalStorage() {
                 try {
                     const storedDesires = localStorage.getItem(this.localStorageKey);
                     if (storedDesires) {
-                      this.desires = JSON.parse(storedDesires);
-                      console.log("Desires loaded from local storage", this.desires)
+                        this.desires = JSON.parse(storedDesires);
+                        console.log("Desires loaded from local storage", this.desires)
                     } else {
-                       this.desires = [];
+                        this.desires = [];
                     }
-                 } catch (error) {
-                     console.error('Error loading from local storage:', error);
-                     this.desires = [];
-                 }
-           }
-            saveDesiresToLocalStorage() {
-                    try {
-                      localStorage.setItem(this.localStorageKey, JSON.stringify(this.desires));
-                    } catch (error) {
-                         console.error('Error saving to local storage:', error);
-                 }
+                } catch (error) {
+                    console.error('Error loading from local storage:', error);
+                    this.desires = [];
+                }
             }
 
-           async addDesire(desireData) {
+            saveDesiresToLocalStorage() {
+                try {
+                    localStorage.setItem(this.localStorageKey, JSON.stringify(this.desires));
+                } catch (error) {
+                    console.error('Error saving to local storage:', error);
+                }
+            }
+
+            async addDesire(desireData) {
                 if (!this.currentUser) throw new Error('User not authenticated');
 
-                 const newDesire = {
+                const newDesire = {
                     ...desireData,
                     id : Math.random().toString(36).substring(2, 15), // Generate a temporary id for local storage usage
                     userId: this.currentUser.uid,
+                    stateNotes: [], // Initialize empty array for state notes
                     createdAt: new Date().toISOString()
                 };
-                    
+
                 this.desires = [...this.desires, newDesire];
                 this.saveDesiresToLocalStorage();
-                 
+
                 try {
-                     await addDoc(collection(db, 'users', this.currentUser.uid, 'desires'), newDesire);
+                    await addDoc(collection(db, 'users', this.currentUser.uid, 'desires'), newDesire);
                      await this.loadDesires();
-                     return true;
-                 } catch (error) {
+                    return true;
+                } catch (error) {
                     console.error('Error adding desire to firebase:', error);
                     throw error;
-                 }
-           }
-
-
-          async deleteDesire(id) {
-                if (!this.currentUser) throw new Error('User not authenticated');
-                 
-                this.desires = this.desires.filter(desire => desire.id !== id);
-                 this.saveDesiresToLocalStorage();
-                 try {
-                       await deleteDoc(doc(db, 'users', this.currentUser.uid, 'desires', id));
-                      await this.loadDesires();
-                      return true;
-                 } catch (error) {
-                      console.error('Error deleting desire from firebase:', error);
-                      throw error;
                 }
-           }
+            }
 
-            async loadDesires() {
+            async deleteDesire(id) {
+                if (!this.currentUser) throw new Error('User not authenticated');
+
+                 this.desires = this.desires.filter(desire => desire.id !== id);
+                 this.saveDesiresToLocalStorage();
+
+                try {
+                    await deleteDoc(doc(db, 'users', this.currentUser.uid, 'desires', id));
+                    await this.loadDesires();
+                    return true;
+                } catch (error) {
+                    console.error('Error deleting desire from firebase:', error);
+                    throw error;
+                }
+            }
+
+           async loadDesires() {
                 if (!this.currentUser) {
                     console.log('No user logged in');
                     this.desires = [];
@@ -608,7 +557,7 @@
 
                     // Query the collection
                     const q = query(desiresRef, orderBy('createdAt', 'desc'));
-                    
+
                     const snapshot = await getDocs(q);
                     console.log('Query snapshot:', {
                         empty: snapshot.empty,
@@ -624,8 +573,8 @@
                     const localDesires = this.desires;
 
                     // Sync logic here
-                     this.desires = this.syncDesires(localDesires, firebaseDesires);
-                     this.saveDesiresToLocalStorage()
+                    this.desires = this.syncDesires(localDesires, firebaseDesires);
+                    this.saveDesiresToLocalStorage()
 
                 } catch (error) {
                     console.error('Detailed error:', {
@@ -642,24 +591,48 @@
             syncDesires(localDesires, firebaseDesires) {
                  const syncedDesires = [...firebaseDesires];
 
-                  localDesires.forEach(localDesire => {
-                      const firebaseMatch = firebaseDesires.find(firebaseDesire => firebaseDesire.id === localDesire.id);
+                 localDesires.forEach(localDesire => {
+                     const firebaseMatch = firebaseDesires.find(firebaseDesire => firebaseDesire.id === localDesire.id);
 
-                      if (!firebaseMatch) {
-                          syncedDesires.push(localDesire);
-                      } else {
+                     if (!firebaseMatch) {
+                         syncedDesires.push(localDesire);
+                     } else {
                          // Update local object with firebase object if different
                          if (JSON.stringify(localDesire) != JSON.stringify(firebaseMatch)) {
-                              const matchIndex = syncedDesires.findIndex(obj => obj.id === localDesire.id)
+                             const matchIndex = syncedDesires.findIndex(obj => obj.id === localDesire.id)
                              syncedDesires[matchIndex] = {...localDesire, ...firebaseMatch}
-                          }
+                         }
 
-                       }
+                     }
 
+                 });
+                 return syncedDesires
+            }
+
+           addStateNote(desireId, note) {
+                const desire = this.desires.find(d => d.id === desireId);
+                if (desire) {
+                    desire.stateNotes.unshift({
+                        id: Date.now(),
+                        text: note,
+                        date: new Date().toISOString()
                     });
-                   return syncedDesires
-              }
-            
+                    this.saveDesiresToLocalStorage();
+                    return true;
+                }
+                return false;
+            }
+
+           deleteStateNote(desireId, noteId) {
+                const desire = this.desires.find(d => d.id === desireId);
+                if (desire) {
+                    desire.stateNotes = desire.stateNotes.filter(note => note.id !== noteId);
+                    this.saveDesiresToLocalStorage();
+                    return true;
+                }
+                return false;
+            }
+
             setCurrentUser(user) {
                 this.currentUser = user;
             }
@@ -667,87 +640,92 @@
 
         // UIManager class to handle the user interface
         class UIManager {
-            constructor(desireManager) {
+             constructor(desireManager) {
                 this.desireManager = desireManager;
-                this.initializeElements();
-                this.initializeEventListeners();
-            }
-
-            initializeElements() {
-                this.mainContent = document.getElementById('mainContent');
                 this.form = document.getElementById('desireForm');
                 this.list = document.getElementById('desiresList');
-                this.userProfile = document.getElementById('userProfile');
-                this.signInBtn = document.getElementById('signInBtn');
-                this.signOutBtn = document.getElementById('signOutBtn');
+                this.micBtn = document.getElementById('micBtn');
+                this.showFormBtn = document.getElementById('showFormBtn');
+                this.speechModal = document.getElementById('speechModal');
+                this.recognitionStatus = document.getElementById('recognitionStatus');
+                this.recognizedText = document.getElementById('recognizedText');
+                this.confirmSpeech = document.getElementById('confirmSpeech');
+                this.cancelSpeech = document.getElementById('cancelSpeech');
+                  this.userProfile = document.getElementById('userProfile');
+                    this.signInBtn = document.getElementById('signInBtn');
+                    this.signOutBtn = document.getElementById('signOutBtn');
+                this.isRecording = false;
+                this.activeRecordingId = null;
+                this.recognition = null;
+                 this.initializeEventListeners();
+                this.initializeSpeechRecognition();
             }
 
-            initializeEventListeners() {
+             initializeEventListeners() {
                 this.form.addEventListener('submit', (e) => this.handleSubmit(e));
                 this.signInBtn.addEventListener('click', () => this.handleSignIn());
                 this.signOutBtn.addEventListener('click', () => this.handleSignOut());
+                this.micBtn.addEventListener('click', () => this.toggleSpeechRecognition());
+                this.showFormBtn.addEventListener('click', () => this.toggleFormVisibility());
+                this.cancelSpeech.addEventListener('click', () => this.closeModal());
             }
 
-            async handleSignIn() {
-                try {
-                    utils.showLoading();
-                    const result = await signInWithPopup(auth, provider);
-                    utils.showToast(`Welcome, ${result.user.displayName}! 🎉`);
-                } catch (error) {
-                    console.error('Sign-in error:', error);
-                    utils.showToast(
-                        error.code === 'auth/popup-closed-by-user'
-                            ? 'Sign-in cancelled'
-                            : 'Failed to sign in. Please try again.',
-                        'error'
-                    );
-                } finally {
-                    utils.hideLoading();
+
+             initializeSpeechRecognition() {
+                if ('SpeechRecognition' in window || 'webkitSpeechRecognition' in window) {
+                    const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+                    this.recognition = new SpeechRecognition();
+                    this.recognition.continuous = true;
+                    this.recognition.interimResults = true;
+
+                    this.recognition.onstart = () => {
+                        this.isRecording = true;
+                        this.updateRecordingUI(true);
+                          this.recognitionStatus.textContent = 'Listening...';
+                           this.recognizedText.innerHTML = '';
+                        this.speechModal.classList.add('active');
+
+                    };
+
+                    this.recognition.onend = () => {
+                        this.isRecording = false;
+                         this.updateRecordingUI(false);
+                          this.recognitionStatus.textContent = 'Finished.';
+                    };
+
+                    this.recognition.onerror = (event) => {
+                        console.error('Speech recognition error:', event.error);
+                         this.stopSpeechRecognition();
+                         this.closeModal();
+                    };
+
+                    this.recognition.onresult = (event) => {
+                        let finalTranscript = '';
+                         for (let i = event.resultIndex; i < event.results.length; i++) {
+                             if (event.results[i].isFinal) {
+                                 finalTranscript += event.results[i][0].transcript + ' ';
+                             }
+                         }
+                         if (finalTranscript) {
+                            this.recognizedText.innerHTML = `<p>${finalTranscript}</p>`
+                           this.confirmSpeech.onclick = () => {
+                            if (this.activeRecordingId) {
+                              this.addStateNote(this.activeRecordingId, finalTranscript.trim())
+                            } else {
+                                document.getElementById('desireTitle').value = finalTranscript.trim();
+                            }
+                              this.closeModal();
+                             this.stopSpeechRecognition();
+                           }
+                         }
+                     }
+                } else {
+                    this.micBtn.style.display = 'none';
+                    console.warn('Speech recognition not supported');
                 }
             }
 
-            async handleSignOut() {
-                try {
-                    utils.showLoading();
-                    await signOut(auth);
-                    utils.showToast('Successfully signed out 👋');
-                    this.desireManager.desires = [];
-                } catch (error) {
-                    console.error('Sign-out error:', error);
-                    utils.showToast('Failed to sign out', 'error');
-                } finally {
-                    utils.hideLoading();
-                }
-            }
-
-            async handleSubmit(e) {
-                e.preventDefault();
-
-                const desire = {
-                    title: this.form.desireTitle.value.trim(),
-                    description: this.form.desireDescription.value.trim(),
-                    priority: this.form.desirePriority.value
-                };
-
-                if (!desire.title) {
-                    utils.showToast('Please enter a desire title', 'error');
-                    return;
-                }
-
-                try {
-                    utils.showLoading();
-                    await this.desireManager.addDesire(desire);
-                    this.renderDesires();
-                    this.form.reset();
-                    utils.showToast('Desire added successfully! 🌟');
-                } catch (error) {
-                    utils.showToast('Failed to add desire', 'error');
-                } finally {
-                    utils.hideLoading();
-                }
-            }
-
-            updateAuthUI(user) {
+              updateAuthUI(user) {
                 if (user) {
                     this.userProfile.classList.add('active');
                     document.getElementById('userAvatar').src = user.photoURL;
@@ -761,113 +739,364 @@
                     this.mainContent.style.display = 'none';
                 }
             }
+            updateRecordingUI(isRecording) {
+                const button = this.activeRecordingId
+                    ? document.querySelector(`button[data-mic="${this.activeRecordingId}"]`)
+                    : this.micBtn;
 
-           renderDesires() {
+                if (button) {
+                    if (isRecording) {
+                        button.classList.add('recording');
+                        button.textContent = this.activeRecordingId ? '🎤 Stop Recording' : '🎤 Stop Dictation';
+                    } else {
+                        button.classList.remove('recording');
+                        button.textContent = this.activeRecordingId ? '🎤 Add Voice Note' : '🎤 Start Dictation';
+                    }
+                }
+            }
+
+            async toggleSpeechRecognition(desireId = null) {
+                try {
+                    if (this.isRecording) {
+                        this.stopSpeechRecognition();
+                        this.closeModal();
+                    } else {
+                        const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+                        this.activeRecordingId = desireId;
+                        this.startSpeechRecognition();
+                    }
+                } catch (error) {
+                    console.error('Microphone permission denied:', error);
+                    alert('Please allow microphone access to use speech recognition.');
+                }
+            }
+
+
+           closeModal(){
+              this.speechModal.classList.remove('active');
+              this.stopSpeechRecognition();
+          }
+
+            startSpeechRecognition() {
+                if (this.recognition) {
+                    this.recognition.start();
+                }
+            }
+
+            stopSpeechRecognition() {
+                if (this.recognition) {
+                    this.recognition.stop();
+                    this.isRecording = false;
+                    this.activeRecordingId = null;
+                }
+            }
+
+             async handleSignIn() {
+                try {
+                     utils.showLoading();
+                     const result = await signInWithPopup(auth, provider);
+                     utils.showToast(`Welcome, ${result.user.displayName}! 🎉`);
+                   } catch (error) {
+                     console.error('Sign-in error:', error);
+                     utils.showToast(
+                       error.code === 'auth/popup-closed-by-user'
+                         ? 'Sign-in cancelled'
+                         : 'Failed to sign in. Please try again.',
+                       'error'
+                     );
+                   } finally {
+                    utils.hideLoading();
+                  }
+            }
+
+             async handleSignOut() {
+                try {
+                   utils.showLoading();
+                   await signOut(auth);
+                   utils.showToast('Successfully signed out 👋');
+                  this.desireManager.desires = [];
+                } catch (error) {
+                  console.error('Sign-out error:', error);
+                  utils.showToast('Failed to sign out', 'error');
+                } finally {
+                     utils.hideLoading();
+               }
+            }
+
+           addStateNote(desireId, note) {
+                if (this.desireManager.addStateNote(desireId, note)){
+                    this.renderDesires();
+                }
+           }
+          deleteStateNote(desireId, noteId) {
+                if(this.desireManager.deleteStateNote(desireId, noteId)){
+                     this.renderDesires();
+                }
+
+            }
+
+             handleSubmit(e) {
+                e.preventDefault();
+
+                const desire = {
+                    title: document.getElementById('desireTitle').value,
+                    description: document.getElementById('desireDescription').value,
+                    priority: document.getElementById('desirePriority').value
+                 };
+                 
+                this.desireManager.addDesire(desire).then(() => {
+                   this.renderDesires();
+                    this.form.reset();
+                 });
+            }
+            toggleFormVisibility() {
+                this.form.style.display = this.form.style.display === 'none' ? 'grid' : 'none';
+            }
+
+            renderDesires() {
                 if (this.desireManager.desires.length === 0) {
                     this.list.innerHTML = `
                         <div class="empty-state">
                             <h3>No desires added yet</h3>
-                            <p>Start by adding your first desire above! 🚀</p>
+                            <p>Start by adding your first desire using voice or text input!</p>
                         </div>
                     `;
                     return;
                 }
-
                 this.list.innerHTML = this.desireManager.desires
                     .map(desire => `
-                        <div class="desire-card" data-desire-id="${desire.id}">
+                        <div class="desire-card"
+                             draggable="true"
+                             data-id="${desire.id}">
                             <div class="desire-header">
                                 <h3 class="desire-title">${desire.title}</h3>
-                                <span class="priority-badge priority-${desire.priority}">
+                                <span class="desire-priority priority-${desire.priority}">
                                     ${desire.priority.charAt(0).toUpperCase() + desire.priority.slice(1)}
                                 </span>
                             </div>
-                            <p class="desire-description">
-                                ${desire.description || 'No description provided'}
-                            </p>
+                            <p class="desire-description">${desire.description || 'No description provided'}</p>
+
+                            <div class="state-notes">
+                                <h4>State Notes</h4>
+                                ${desire.stateNotes.map(note => `
+                                    <div class="state-note">
+                                        <span>${note.text}</span>
+                                        <div class="state-note-actions">
+                                            <span class="state-note-date">${utils.formatDate(note.date)}</span>
+                                            <button onclick="event.stopPropagation(); app.uiManager.deleteStateNote('${desire.id}', '${note.id}')">
+                                                ❌
+                                            </button>
+                                        </div>
+                                    </div>
+                                `).join('')}
+
+                                <div class="state-actions">
+                                     <button class="state-btn"
+                                            data-mic="${desire.id}"
+                                            onclick="event.stopPropagation(); app.uiManager.toggleStateInput('${desire.id}', 'voice')">
+                                        🎤 Add Voice Note
+                                    </button>
+                                    <button class="state-btn"
+                                           onclick="event.stopPropagation(); app.uiManager.toggleStateInput('${desire.id}', 'text')">
+                                        ✏️ Add Text Note
+                                    </button>
+                                </div>
+
+                                <div class="state-input-group" data-desire="${desire.id}">
+                                    <input type="text"
+                                           class="state-input"
+                                           placeholder="Enter your state note..."
+                                           onkeypress="if(event.key === 'Enter') {
+                                               app.uiManager.addStateNote('${desire.id}', this.value);
+                                               this.value = '';
+                                               this.parentElement.classList.remove('active');
+                                           }">
+                                </div>
+                            </div>
+
                             <div class="desire-footer">
-                                <span class="desire-date">
-                                    Created on ${utils.formatDate(desire.createdAt)}
-                                </span>
-                                <button 
-                                    class="btn btn-danger delete-desire-btn"
-                                >
-                                    🗑️ Delete
+                                <span class="desire-date">${utils.formatDate(desire.createdAt)}</span>
+                                <button class="delete-btn" onclick="event.stopPropagation(); app.uiManager.deleteDesire('${desire.id}')">
+                                    Delete
                                 </button>
                             </div>
                         </div>
                     `)
                     .join('');
-                    this.addDeleteEventListeners();
+                this.initializeDragAndDrop();
             }
 
-             addDeleteEventListeners(){
-                document.querySelectorAll('.delete-desire-btn').forEach(button => {
-                    button.addEventListener('click', (event) => {
-                        const card = event.target.closest('.desire-card');
-                        const desireId = card.dataset.desireId;
-                        if(desireId){
-                             this.deleteDesire(desireId)
-                        }
-                    });
+            toggleStateInput(desireId, inputType) {
+                const inputGroup = document.querySelector(`.state-input-group[data-desire="${desireId}"]`);
+                if (inputGroup) {
+                   if (inputType === 'voice') {
+                       this.toggleSpeechRecognition(desireId);
+                   } else {
+                       inputGroup.classList.toggle('active');
+                       if (inputGroup.classList.contains('active')) {
+                           inputGroup.querySelector('input').focus();
+                       }
+                   }
+                }
+            }
+             initializeDragAndDrop() {
+                this.list.addEventListener('dragstart', (e) => {
+                    if (e.target.classList.contains('desire-card')) {
+                        e.target.classList.add('dragging');
+                        e.dataTransfer.setData('text/plain', e.target.dataset.id);
+                    }
+                });
+
+                this.list.addEventListener('dragend', (e) => {
+                    if (e.target.classList.contains('desire-card')) {
+                        e.target.classList.remove('dragging');
+                    }
+                });
+
+                this.list.addEventListener('dragover', (e) => {
+                    e.preventDefault();
+                    const afterElement = this.getDragAfterElement(this.list, e.clientY);
+                    const draggable = document.querySelector('.dragging');
+                                      if (afterElement) {
+                        this.list.insertBefore(draggable, afterElement);
+                    } else {
+                        this.list.appendChild(draggable);
+                    }
+                });
+
+                 this.list.addEventListener('drop', (e) => {
+                     e.preventDefault();
+                    this.updateDesireOrder();
+                 });
+            }
+
+             getDragAfterElement(container, y) {
+                const draggableElements = [...container.querySelectorAll('.desire-card:not(.dragging)')];
+                return draggableElements.reduce((closest, child) => {
+                    const box = child.getBoundingClientRect();
+                    const offset = y - box.top - box.height / 2;
+                    if (offset < 0 && offset > closest.offset) {
+                        return { offset: offset, element: child };
+                    } else {
+                        return closest;
+                    }
+                }, { offset: Number.NEGATIVE_INFINITY }).element;
+            }
+
+            updateDesireOrder() {
+                const cards = [...this.list.querySelectorAll('.desire-card')];
+                const newOrder = cards.map(card => {
+                  return this.desireManager.desires.find(desire => desire.id === card.dataset.id);
+                });
+                this.desireManager.desires = newOrder;
+                this.desireManager.saveDesiresToLocalStorage();
+            }
+
+
+             deleteDesire(id) {
+                this.desireManager.deleteDesire(id).then(() => {
+                      this.renderDesires();
                 });
             }
+        }
 
-            async deleteDesire(id) {
+         class AuthManager {
+            constructor(desireManager, uiManager) {
+                this.desireManager = desireManager;
+                this.uiManager = uiManager;
+            }
+
+             async handleSignIn() {
                 try {
-                    utils.showLoading();
-                    await this.desireManager.deleteDesire(id);
-                    this.renderDesires();
-                    utils.showToast('Desire deleted successfully! 🗑️');
+                     utils.showLoading();
+                    const result = await signInWithPopup(auth, provider);
+                    utils.showToast(`Welcome, ${result.user.displayName}! 🎉`);
+                   return true;
                 } catch (error) {
-                    utils.showToast('Failed to delete desire', 'error');
+                     console.error('Sign-in error:', error);
+                     utils.showToast(
+                       error.code === 'auth/popup-closed-by-user'
+                         ? 'Sign-in cancelled'
+                         : 'Failed to sign in. Please try again.',
+                       'error'
+                     );
+                   return false;
                 } finally {
-                    utils.hideLoading();
+                  utils.hideLoading();
                 }
             }
 
+             async handleSignOut() {
+                try {
+                    utils.showLoading();
+                  await signOut(auth);
+                    utils.showToast('Successfully signed out 👋');
+                    return true;
+                 } catch (error) {
+                    console.error('Sign-out error:', error);
+                    utils.showToast('Failed to sign out', 'error');
+                    return false;
+                } finally {
+                  utils.hideLoading();
+                }
+            }
         }
-
         // Main Application class
-        class DesireTracker {
+         class DesireTracker {
             constructor() {
                 this.desireManager = new DesireManager();
                 this.uiManager = new UIManager(this.desireManager);
+                this.authManager = new AuthManager(this.desireManager, this.uiManager)
                 this.initializeAuth();
             }
 
-            initializeAuth() {
+
+             initializeAuth() {
                 onAuthStateChanged(auth, async (user) => {
                     console.log('Auth state changed:', user ? {
                         uid: user.uid,
                         email: user.email,
                         provider: user.providerData[0]?.providerId
                     } : 'No user');
-                    
-                    this.desireManager.setCurrentUser(user);
+                     this.desireManager.setCurrentUser(user);
                     this.uiManager.updateAuthUI(user);
-                    
+
                     if (user) {
                         try {
-                            utils.showLoading();
+                           utils.showLoading();
                             this.desireManager.loadDesiresFromLocalStorage();
                            await this.desireManager.loadDesires();
                             this.uiManager.renderDesires();
-                        } catch (error) {
+                           
+                         } catch (error) {
                             console.error('Load error:', error);
-                            utils.showToast('Failed to load desires', 'error');
+                           utils.showToast('Failed to load desires', 'error');
                         } finally {
-                            utils.hideLoading();
+                          utils.hideLoading();
                         }
+                    } else {
+                        this.desireManager.desires = [];
+                        this.uiManager.renderDesires();
                     }
                 });
             }
-
-           
         }
 
         // Initialize and expose the application globally
         window.app = new DesireTracker();
+
+        // Event Listener for Auth button
+        const signInBtn = document.getElementById('signInBtn');
+         signInBtn.addEventListener('click', async () => {
+            await app.authManager.handleSignIn();
+         });
+
+          const signOutBtn = document.getElementById('signOutBtn');
+            signOutBtn.addEventListener('click', async () => {
+           await app.authManager.handleSignOut();
+         });
+
     </script>
 </body>
 </html>
+                    
