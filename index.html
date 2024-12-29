@@ -425,8 +425,11 @@
         const db = getFirestore(app);
         const provider = new GoogleAuthProvider();
 
-       // Utility functions
-         const utils = {
+        // Utility functions
+        const utils = {
+            showLoading: () => document.getElementById('loadingOverlay').classList.add('active'),
+            hideLoading: () => document.getElementById('loadingOverlay').classList.remove('active'),
+
             formatDate: (dateString) => {
                 return new Date(dateString).toLocaleDateString('en-US', {
                     year: 'numeric',
@@ -436,8 +439,6 @@
                     minute: '2-digit'
                 });
             },
-             showLoading: () => document.getElementById('loadingOverlay').classList.add('active'),
-            hideLoading: () => document.getElementById('loadingOverlay').classList.remove('active'),
             showToast: (message, type = 'success') => {
                 const toastContainer = document.getElementById('toastContainer');
                 const toast = document.createElement('div');
@@ -476,7 +477,7 @@
                 try {
                     const storedDesires = localStorage.getItem(this.localStorageKey);
                     if (storedDesires) {
-                        this.desires = JSON.parse(storedDesires);
+                         this.desires = JSON.parse(storedDesires);
                         console.log("Desires loaded from local storage", this.desires)
                     } else {
                         this.desires = [];
@@ -510,8 +511,15 @@
                 this.saveDesiresToLocalStorage();
 
                 try {
-                    await addDoc(collection(db, 'users', this.currentUser.uid, 'desires'), newDesire);
-                     await this.loadDesires();
+                    const docRef = await addDoc(collection(db, 'users', this.currentUser.uid, 'desires'), newDesire);
+                   // Update local desire with the firebase id
+                    const addedDesireIndex = this.desires.findIndex((desire) => desire.id === newDesire.id);
+                     if(addedDesireIndex > -1) {
+                         this.desires[addedDesireIndex] = {...this.desires[addedDesireIndex], id: docRef.id}
+                         this.saveDesiresToLocalStorage();
+                         console.log("Firestore id added to local storage object")
+                     }
+                    await this.loadDesires(); // Refresh desires to ensure sync
                     return true;
                 } catch (error) {
                     console.error('Error adding desire to firebase:', error);
@@ -536,7 +544,7 @@
             }
 
            async loadDesires() {
-                if (!this.currentUser) {
+              if (!this.currentUser) {
                     console.log('No user logged in');
                     this.desires = [];
                     return;
@@ -565,16 +573,16 @@
                     });
 
                     //Map data from firebase, and update
-                    const firebaseDesires = snapshot.docs.map(doc => ({
+                   const firebaseDesires = snapshot.docs.map(doc => ({
                         id: doc.id,
                         ...doc.data()
                     }));
 
-                    const localDesires = this.desires;
+                   const localDesires = this.desires
 
                     // Sync logic here
                     this.desires = this.syncDesires(localDesires, firebaseDesires);
-                    this.saveDesiresToLocalStorage()
+                   this.saveDesiresToLocalStorage();
 
                 } catch (error) {
                     console.error('Detailed error:', {
@@ -589,27 +597,27 @@
             }
 
             syncDesires(localDesires, firebaseDesires) {
-                 const syncedDesires = [...firebaseDesires];
+                const syncedDesires = [...firebaseDesires];
+                localDesires.forEach(localDesire => {
+                    const firebaseMatch = firebaseDesires.find(firebaseDesire => firebaseDesire.id === localDesire.id);
 
-                 localDesires.forEach(localDesire => {
-                     const firebaseMatch = firebaseDesires.find(firebaseDesire => firebaseDesire.id === localDesire.id);
+                    if (!firebaseMatch) {
+                        syncedDesires.push(localDesire);
+                    } else {
+                        // Update local object with firebase object if different
+                        if (JSON.stringify(localDesire) != JSON.stringify(firebaseMatch)) {
+                            const matchIndex = syncedDesires.findIndex(obj => obj.id === localDesire.id)
+                           syncedDesires[matchIndex] = {...localDesire, ...firebaseMatch}
+                        }
 
-                     if (!firebaseMatch) {
-                         syncedDesires.push(localDesire);
-                     } else {
-                         // Update local object with firebase object if different
-                         if (JSON.stringify(localDesire) != JSON.stringify(firebaseMatch)) {
-                             const matchIndex = syncedDesires.findIndex(obj => obj.id === localDesire.id)
-                             syncedDesires[matchIndex] = {...localDesire, ...firebaseMatch}
-                         }
-
-                     }
-
-                 });
-                 return syncedDesires
+                    }
+                });
+                return syncedDesires
+             }
+            setCurrentUser(user) {
+                this.currentUser = user;
             }
-
-           addStateNote(desireId, note) {
+             addStateNote(desireId, note) {
                 const desire = this.desires.find(d => d.id === desireId);
                 if (desire) {
                     desire.stateNotes.unshift({
@@ -633,9 +641,6 @@
                 return false;
             }
 
-            setCurrentUser(user) {
-                this.currentUser = user;
-            }
         }
 
         // UIManager class to handle the user interface
@@ -725,7 +730,7 @@
                 }
             }
 
-              updateAuthUI(user) {
+            updateAuthUI(user) {
                 if (user) {
                     this.userProfile.classList.add('active');
                     document.getElementById('userAvatar').src = user.photoURL;
@@ -796,6 +801,7 @@
                      utils.showLoading();
                      const result = await signInWithPopup(auth, provider);
                      utils.showToast(`Welcome, ${result.user.displayName}! 🎉`);
+                    return true;
                    } catch (error) {
                      console.error('Sign-in error:', error);
                      utils.showToast(
@@ -804,14 +810,15 @@
                          : 'Failed to sign in. Please try again.',
                        'error'
                      );
+                     return false;
                    } finally {
-                    utils.hideLoading();
-                  }
+                   utils.hideLoading();
+                 }
             }
 
              async handleSignOut() {
                 try {
-                   utils.showLoading();
+                     utils.showLoading();
                    await signOut(auth);
                    utils.showToast('Successfully signed out 👋');
                   this.desireManager.desires = [];
@@ -819,7 +826,7 @@
                   console.error('Sign-out error:', error);
                   utils.showToast('Failed to sign out', 'error');
                 } finally {
-                     utils.hideLoading();
+                  utils.hideLoading();
                }
             }
 
@@ -854,7 +861,7 @@
             }
 
             renderDesires() {
-                if (this.desireManager.desires.length === 0) {
+                 if (this.desireManager.desires.length === 0) {
                     this.list.innerHTML = `
                         <div class="empty-state">
                             <h3>No desires added yet</h3>
@@ -916,14 +923,13 @@
 
                             <div class="desire-footer">
                                 <span class="desire-date">${utils.formatDate(desire.createdAt)}</span>
-                                <button class="delete-btn" onclick="event.stopPropagation(); app.uiManager.deleteDesire('${desire.id}')">
-                                    Delete
+                                <button class="delete-btn" onclick="event.stopPropagation(); app.uiManager.deleteDesire('${desire.id}')">                                    Delete
                                 </button>
                             </div>
                         </div>
                     `)
                     .join('');
-                this.initializeDragAndDrop();
+                 this.initializeDragAndDrop();
             }
 
             toggleStateInput(desireId, inputType) {
@@ -957,7 +963,7 @@
                     e.preventDefault();
                     const afterElement = this.getDragAfterElement(this.list, e.clientY);
                     const draggable = document.querySelector('.dragging');
-                                      if (afterElement) {
+                    if (afterElement) {
                         this.list.insertBefore(draggable, afterElement);
                     } else {
                         this.list.appendChild(draggable);
@@ -1007,11 +1013,11 @@
             }
 
              async handleSignIn() {
-                try {
+                 try {
                      utils.showLoading();
                     const result = await signInWithPopup(auth, provider);
-                    utils.showToast(`Welcome, ${result.user.displayName}! 🎉`);
-                   return true;
+                     utils.showToast(`Welcome, ${result.user.displayName}! 🎉`);
+                    return true;
                 } catch (error) {
                      console.error('Sign-in error:', error);
                      utils.showToast(
@@ -1021,17 +1027,17 @@
                        'error'
                      );
                    return false;
-                } finally {
+                }  finally {
                   utils.hideLoading();
                 }
             }
 
              async handleSignOut() {
                 try {
-                    utils.showLoading();
-                  await signOut(auth);
-                    utils.showToast('Successfully signed out 👋');
-                    return true;
+                      utils.showLoading();
+                   await signOut(auth);
+                   utils.showToast('Successfully signed out 👋');
+                   return true;
                  } catch (error) {
                     console.error('Sign-out error:', error);
                     utils.showToast('Failed to sign out', 'error');
@@ -1050,7 +1056,6 @@
                 this.initializeAuth();
             }
 
-
              initializeAuth() {
                 onAuthStateChanged(auth, async (user) => {
                     console.log('Auth state changed:', user ? {
@@ -1059,20 +1064,19 @@
                         provider: user.providerData[0]?.providerId
                     } : 'No user');
                      this.desireManager.setCurrentUser(user);
-                    this.uiManager.updateAuthUI(user);
+                     this.uiManager.updateAuthUI(user);
 
                     if (user) {
                         try {
-                           utils.showLoading();
-                            this.desireManager.loadDesiresFromLocalStorage();
+                             utils.showLoading();
+                           this.desireManager.loadDesiresFromLocalStorage();
                            await this.desireManager.loadDesires();
                             this.uiManager.renderDesires();
-                           
                          } catch (error) {
                             console.error('Load error:', error);
                            utils.showToast('Failed to load desires', 'error');
                         } finally {
-                          utils.hideLoading();
+                           utils.hideLoading();
                         }
                     } else {
                         this.desireManager.desires = [];
@@ -1099,4 +1103,3 @@
     </script>
 </body>
 </html>
-                    
